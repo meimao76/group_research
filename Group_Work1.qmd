@@ -1,0 +1,678 @@
+---
+bibliography: CASA13_group_project.bib
+csl: harvard-cite-them-right.csl
+title: Group Name's Group Project
+execute:
+  echo: false
+  freeze: true
+format:
+  html:
+    code-copy: true
+    code-link: true
+    toc: true
+    toc-title: On this page
+    toc-depth: 2
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+  pdf:
+    include-in-header:
+      text: |
+        \addtokomafont{disposition}{\rmfamily}
+    mainfont: Spectral
+    sansfont: Roboto Flex
+    monofont: Liberation Mono
+    papersize: a4
+    geometry:
+      - top=25mm
+      - left=40mm
+      - right=30mm
+      - bottom=25mm
+      - heightrounded
+    toc: false
+    number-sections: false
+    colorlinks: true
+    highlight-style: github
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.16.4
+  kernelspec:
+    display_name: Python (base)
+    language: python
+    name: base
+---
+
+```{python}
+## 单房东 vs 多房东的比例+
+单房东和多房东的定义
+多房东的数量虽然比单房东的数量少一半，单他们名下占的房源比例确占总房源的几乎50%
+```
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import scipy as sp
+from shapely.geometry import Point
+from geopandas import GeoDataFrame
+import matplotlib.pyplot as plt
+import seaborn as sns
+from IPython.display import display, Markdown
+from tabulate import tabulate
+from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib.patches import FancyArrowPatch
+from IPython.display import display, HTML
+
+raw_airbnb=pd.read_csv("data/listings.csv")
+msoa_raw_boundary=gpd.read_file("data/greater_london.gpkg")
+
+geometry = [Point(xy) for xy in zip(raw_airbnb['longitude'], raw_airbnb['latitude'])]
+geo_airbnb = gpd.GeoDataFrame(raw_airbnb, geometry=geometry, crs="EPSG:4326")
+# Import Audemars Piguet CSV, convert to GeoDataFrame
+geo_airbnb=geo_airbnb.to_crs("EPSG:27700")
+geo_airbnb = GeoDataFrame(geo_airbnb, geometry=geo_airbnb['geometry'])
+# Unified Coordinate System (UCS) for reprojection
+
+# Sift out unneeded columns
+geo_airbnb=geo_airbnb.drop(columns=['id', 'name', 'neighbourhood_group','availability_365'])
+airbnb_intersect = gpd.sjoin(geo_airbnb, msoa_raw_boundary, how="inner", predicate="intersects")
+# Cleaning data: removing spaces, processing missing values
+airbnb_intersect['room_type'] = airbnb_intersect['room_type'].str.strip().fillna('Unknown')
+# Intersecting Airbnb Data and Space
+
+# De-duplicate hosts and keep their listings_count (de-duplication is based on host_name)
+unique_hosts = airbnb_intersect[['host_name', 'calculated_host_listings_count']].drop_duplicates()
+
+# Add a new column host_type（Single Host + Multi Host）
+unique_hosts["host_type"] = unique_hosts["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+airbnb_intersect["host_type"] = airbnb_intersect["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+# Filter the number of single hosts (calculated_host_listings_count == 1)
+# Filter for multiple hosts (calculated_host_listings_count > 1)
+single_host_count = (unique_hosts['calculated_host_listings_count'] == 1).sum()
+multi_host_count = (unique_hosts['calculated_host_listings_count'] > 1).sum()
+
+# Counting the number of listings controlled by multiple hosts
+multi_host_listings = unique_hosts.loc[unique_hosts['calculated_host_listings_count'] > 1, 'calculated_host_listings_count'].sum()
+
+# Calculate the total number of listings and the ratio of multiple hosts
+total_listings = len(airbnb_intersect)
+multi_host_listings_ratio = multi_host_listings / total_listings * 100
+
+# Creating Forms
+host_summary = pd.DataFrame({
+    "Category": ["Single Host Count", "Multi Host Count", "Multi Host Listings Ratio (%)"],
+    "Value": [single_host_count, multi_host_count, f"{multi_host_listings_ratio:.2f}"]
+})
+
+from IPython.display import display
+
+# Organize data into a Series for plotting
+data = unique_hosts['host_type'].value_counts()
+```
+
+```{python}
+# Number and percentage of properties by type of listing
+listing_type_stats = airbnb_intersect["room_type"].value_counts(normalize=True)
+
+# Estimated total rental days and annual revenue
+airbnb_intersect['estimated_rented_days'] = airbnb_intersect['minimum_nights'] * airbnb_intersect['reviews_per_month'] * 12
+airbnb_intersect['estimated_annual_income'] = airbnb_intersect['estimated_rented_days'] * airbnb_intersect['price']
+
+# Calculate average rental days and annual revenue by subgroup
+summary_stats = airbnb_intersect.groupby('room_type').agg(
+    average_rented_days=('estimated_rented_days', 'mean'),
+    average_annual_income=('estimated_annual_income', 'mean')
+).reset_index()
+
+# Organized in a tabular form
+room_summary_table = pd.DataFrame({
+    "Room Type": listing_type_stats.index,
+    "Proportion (%)": (listing_type_stats.values * 100).round(2) 
+}).merge(summary_stats, left_on="Room Type", right_on="room_type").drop(columns="room_type")
+
+# Renaming columns
+room_summary_table.rename(columns={
+    "average_rented_days": "Average Rented Days",
+    "average_annual_income": "Average Annual Income"
+}, inplace=True)
+
+# output table
+styled_table = room_summary_table.style\
+    .highlight_max(subset=["Proportion (%)", "Average Annual Income"], color="lightgreen")\
+    .highlight_min(subset=["Average Rented Days"], color="lightcoral")\
+    .format({
+        "Proportion (%)": "{:.2f}%",
+        "Average Rented Days": "{:.1f} days",
+        "Average Annual Income": "${:,.2f}"
+    })\
+    .set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#4CAF50'), ('color', 'white'), ('font-weight', 'bold')]},
+        {'selector': 'tbody td', 'props': [('text-align', 'center')]},
+        {'selector': 'tbody tr:hover', 'props': [('background-color', '#f4f4f4')]}
+    ])
+
+from IPython.display import HTML, display
+
+host_summary = host_summary.reset_index(drop=True)
+
+host_styled = host_summary.style\
+    .set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#4CAF50'), ('color', 'white'), ('font-weight', 'bold'), ('text-align','center')]},
+        {'selector': 'tbody td', 'props': [('text-align', 'center')]},
+        {'selector': 'tbody tr:hover', 'props': [('background-color', '#f4f4f4')]}
+    ])\
+    .set_caption("Host Summary")\
+    .format({"Value": str})
+
+
+
+# Converting two tables into HTML code and controlling the appearance and layout via CSS
+host_html = host_styled.set_table_attributes("style='display:inline-block; margin-right:50px; border:1px solid #ccc; vertical-align:top;'")._repr_html_()
+room_html = styled_table.set_table_attributes("style='display:inline-block; border:1px solid #ccc; vertical-align:top;'")._repr_html_()
+
+# Display two side-by-side tables
+display(HTML(host_html + room_html))
+```
+
+## 房源类型分布地图
+
+```{python}
+# Rename index_right column in airbnb_intersect
+if "index_right" in airbnb_intersect.columns:
+    airbnb_intersect = airbnb_intersect.rename(columns={"index_right": "index_right_old"})
+
+# Rename the index_right column in msoa_raw_boundary
+if "index_right" in msoa_raw_boundary.columns:
+    msoa_raw_boundary = msoa_raw_boundary.rename(columns={"index_right": "index_right_old"})
+
+# Performs spatial connectivity
+airbnb_intersect_merged_gdf = gpd.sjoin(
+    airbnb_intersect, msoa_raw_boundary, how="inner", predicate="within"
+)
+
+# Updated data
+airbnb_gdf = airbnb_intersect_merged_gdf
+boundary_gdf = msoa_raw_boundary
+
+# Define a dictionary of listing types and color correspondences
+color_map = {
+    "Entire home/apt": "#04579B",
+    "Private room": "#DBF1FA",
+    "Shared room": "#519D78",
+    "Hotel room": "#6FC8CA"
+}
+
+# Setting the chart size and style
+fig, ax = plt.subplots(figsize=(12, 12))
+plt.style.use("seaborn-v0_8-muted")
+
+# Drawing of area boundaries
+boundary_gdf.plot(ax=ax, color='whitesmoke', edgecolor='grey', linewidth=0.7, alpha=0.7)
+
+# Plot points by category, using custom colors
+for room_type, color in color_map.items():
+    subset = airbnb_gdf[airbnb_gdf['room_type'] == room_type]
+    subset.plot(
+        ax=ax,
+        color=color,
+        markersize=5,
+        alpha=0.4,
+        label=room_type
+    )
+
+# Setup Legend
+ax.legend(title="Room Type", loc="upper left")
+
+# Setting the map title and axes
+plt.title("Airbnb Room Type Spatial Distribution", fontsize=15)
+plt.axis("off")  # Remove axes frame lines
+plt.tight_layout()
+plt.show()
+```
+
+# 比较伦敦内airbnb房源密度和酒店密度（分别采用poi数据进行处理）
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+import numpy as np
+import matplotlib.pyplot as plt
+import contextily as ctx
+import matplotlib.pyplot as plt
+import mapclassify as mc
+import matplotlib.patches as mpatches
+import libpysal as ps
+import esda
+import matplotlib.pyplot as plt
+import os
+```
+
+```{python}
+# loading cleaning csv
+df = pd.read_csv("https://raw.githubusercontent.com/TARTAR4600/group_research_data_cleaning/refs/heads/main/data/listings.csv")
+
+# create GeoDataFrame the geographic coordinate reference system is WGS84 (EPSG:4326)
+geometry = [Point(xy) for xy in zip(df['longitude'], df['latitude'])]
+geo_df = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+# save as a Parquet file
+geo_df.to_parquet("airbnb_listings_wgs84.parquet", index=False)
+```
+
+```{python}
+shp_path = "londons_pois.gpkg"
+gdf = gpd.read_file(shp_path)
+if gdf.crs is None:
+    gdf = gdf.set_crs("EPSG:4326")
+else:
+    gdf = gdf.to_crs("EPSG:4326")
+
+londonacc_t_gdf = gdf[gdf['category'] == 'ACCOMMODATION']
+london_hotel_gdf = londonacc_t_gdf[londonacc_t_gdf['subcategor'] == 'HOTEL']
+output_path = "hotel_point.parquet"
+london_hotel_gdf.to_parquet(output_path, index=False)
+london_hotel_gdf = gpd.read_parquet(output_path)
+```
+
+```{python}
+import os
+#Loading data  
+ddir = os.path.join('data')
+file_path = os.path.join(ddir, 'greater_london.gpkg')  #full path
+
+# loading GPKG
+msoa_boundaries = gpd.read_file(file_path)
+
+hotel_gdf = gpd.read_parquet("hotel_point.parquet")
+airbnb_gdf = gpd.read_parquet("airbnb_listings_wgs84.parquet")
+
+#Change the point to a projected coordinate system
+airbnb_gdf = airbnb_gdf.to_crs('epsg:27700') # There is no 'in_place=True' option here.
+hotel_gdf = hotel_gdf.to_crs('epsg:27700') # There is no 'in_place=True' option here.
+
+#join the data  
+# using spatial join to link Airbnb points to MSOA regions
+airbnb_with_msoa = gpd.sjoin(airbnb_gdf, msoa_boundaries, how="inner", predicate='within')
+
+# Counting the number of Airbnb points in each MSOA area
+airbnb_count = airbnb_with_msoa.groupby('geo_code').size().reset_index(name='airbnb_count')
+
+msoa_boundaries['area_m2'] = msoa_boundaries.geometry.area
+msoa_boundaries['area_h'] = msoa_boundaries.geometry.area / 10000
+# merge data
+msoa_with_airbnb = msoa_boundaries.merge(airbnb_count, on='geo_code', how='left')
+
+#nan=0
+msoa_with_airbnb['airbnb_count'] = msoa_with_airbnb['airbnb_count'].fillna(0)
+
+msoa_with_airbnb['density'] = msoa_with_airbnb['airbnb_count'] / msoa_with_airbnb['area_h']
+
+# Standardised formula：Min-Max Scaling
+def min_max_scaling(column):
+    return (column - column.min()) / (column.max() - column.min())
+
+
+msoa_with_airbnb['nairbnb_count'] = min_max_scaling(msoa_with_airbnb['airbnb_count'])
+msoa_with_airbnb['n_density'] = min_max_scaling(msoa_with_airbnb['density'])
+
+#Join hotel data
+hotels_with_msoa = gpd.sjoin(hotel_gdf, msoa_with_airbnb, how="inner", predicate="within")
+hotel_count = hotels_with_msoa.groupby('geo_code').size().reset_index(name='hotel_count')
+msoa_with_airbnb_hotels = msoa_with_airbnb.merge(hotel_count, on='geo_code', how='left')
+msoa_with_airbnb_hotels['hotel_count'] = msoa_with_airbnb_hotels['hotel_count'].fillna(0)
+msoa_with_airbnb_hotels['hotel_density'] = msoa_with_airbnb_hotels['hotel_count'] / msoa_with_airbnb_hotels['area_h']
+
+# Standardised formula：Min-Max Scaling
+def min_max_scaling(column):
+    return (column - column.min()) / (column.max() - column.min())
+
+
+msoa_with_airbnb_hotels['nhotel_count'] = min_max_scaling(msoa_with_airbnb_hotels['hotel_count'])
+msoa_with_airbnb_hotels['nhotel_density'] = min_max_scaling(msoa_with_airbnb_hotels['hotel_density'])
+
+import matplotlib.pyplot as plt
+import mapclassify as mc
+import geopandas as gpd
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.patches as mpatches
+
+fig, axes = plt.subplots(1, 2, figsize=(20, 7))
+
+blues_custom = LinearSegmentedColormap.from_list("custom_blues", ['#E6F2FF', '#6BAED6', '#2171B5'], N=256)
+greens_custom = LinearSegmentedColormap.from_list("custom_greens", ['#E5F5E0', '#74C476', '#238B45'], N=256)
+
+
+def custom_legend(scheme, cmap, title):
+    bins = scheme.bins
+    labels = [f"{format(bins[i-1], '.2g')} - {format(bins[i], '.2g')}" for i in range(1, len(bins))]
+    labels.insert(0, f"< {format(bins[0], '.2g')}")
+    colors = [cmap(i / len(labels)) for i in range(len(labels))]
+    patches = [mpatches.Patch(color=colors[i], label=labels[i]) for i in range(len(labels))]
+    return patches
+
+# Airbnb density (Natural Breaks)
+scheme_density = mc.NaturalBreaks(msoa_with_airbnb_hotels['density'], k=8)
+msoa_with_airbnb_hotels.plot(
+    column='density',
+    cmap=blues_custom,
+    legend=False,
+    linewidth=0.5,
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 8},
+    ax=axes[0]
+)
+axes[0].set_title("Airbnb Density (Natural Breaks)")
+axes[0].set_axis_off()
+
+airbnb_legend = custom_legend(scheme_density, blues_custom, "Airbnb Density (per hectare)")
+axes[0].legend(
+    handles=airbnb_legend, 
+    title="Airbnb Density (per hectare)", 
+    loc="upper left",
+    fontsize=8,        
+    title_fontsize=10,  
+    labelspacing=0.5,  
+    handlelength=1,    
+    frameon=True       
+)
+
+# Hotel density (Natural Breaks)
+scheme_hotel_density = mc.NaturalBreaks(msoa_with_airbnb_hotels['hotel_density'], k=8)
+msoa_with_airbnb_hotels.plot(
+    column='hotel_density',
+    cmap=greens_custom,
+    legend=False,
+    linewidth=0.5,
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 8},
+    ax=axes[1]
+)
+axes[1].set_title("Hotel Density (Natural Breaks)")
+axes[1].set_axis_off()
+
+
+# Hotel density 
+hotel_legend = custom_legend(scheme_hotel_density, greens_custom, "Hotel Density (per hectare)")
+axes[1].legend(
+    handles=hotel_legend, 
+    title="Hotel Density (per hectare)", 
+    loc="upper left",
+    fontsize=8,        
+    title_fontsize=10,  
+    labelspacing=0.5,  
+    handlelength=1,     
+    frameon=True     
+)
+
+# layout
+plt.tight_layout()
+plt.show()
+```
+
+The plots show that Airbnb has a wider distribution, with high-density areas in Central London’s tourist hotspots (e.g., West End, River Thames, South Bank) and a spread into outer residential areas like Islington and Hackney, highlighting its strong market penetration and flexibility. In contrast, hotels are concentrated in central tourist and commercial areas (e.g., Thames, City of London, Oxford Street) and are largely absent in outer regions, revealing market limitations that Airbnb can potentially fill.
+
+```{python}
+import matplotlib.pyplot as plt
+import contextily as ctx
+import mapclassify as mc
+import matplotlib.patches as mpatches
+
+tdf = pd.read_csv("data/london_tourism_area.csv")
+tdf['MSOA11CD'] = tdf['MSOA11CD'].astype(str)  #turn both type to str
+msoa_with_airbnb_hotels['geo_code'] = msoa_with_airbnb_hotels['geo_code'].astype(str)
+
+# join the data together
+msoa_with_airbnb_hotels = msoa_with_airbnb_hotels.merge(
+    tdf,
+    left_on='geo_code',        # msoa_with_airbnb_hotels 中的列
+    right_on='MSOA11CD',     # tdfcolumnc
+    how='left'               # left join
+)
+
+
+msoa_with_airbnb_hotels = msoa_with_airbnb_hotels.drop(columns=['MSOA11CD'])
+
+#tradtional area and non_traditional_area
+traditional_area = msoa_with_airbnb_hotels[msoa_with_airbnb_hotels['hotspot_binary'] == 1]
+non_traditional_area = msoa_with_airbnb_hotels[msoa_with_airbnb_hotels['hotspot_binary'] == 0]
+```
+
+```{python}
+scheme_traditional = mc.NaturalBreaks(traditional_area['density'], k=5) 
+scheme_non_traditional = mc.NaturalBreaks(non_traditional_area['density'], k=5)
+
+fig, ax = plt.subplots(1, 2, figsize=(20, 7))
+
+
+box_aspect_ratio = 1
+
+# Traditional tourist areas
+ax[0].set_box_aspect(box_aspect_ratio)
+traditional_area.plot(
+    column='density',
+    cmap='Reds',
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 5},
+    legend=False,
+    ax=ax[0]
+)
+ctx.add_basemap(ax[0], source=ctx.providers.Esri.WorldGrayCanvas, crs=traditional_area.crs, alpha=0.5)
+ax[0].set_title("Airbnb Density - Traditional Tourist Area",fontsize=8)
+ax[0].axis("off")
+
+bins_traditional = scheme_traditional.bins
+labels_traditional = [f"{int(bins_traditional[i-1])} - {int(bins_traditional[i])}" for i in range(1, len(bins_traditional))]
+labels_traditional.insert(0, f"< {int(bins_traditional[0])}")
+colors_traditional = plt.cm.Reds(range(50, 256, 50))
+
+
+patches_traditional = [mpatches.Patch(color=colors_traditional[i], label=labels_traditional[i]) for i in range(len(labels_traditional))]
+ax[0].legend(
+    handles=patches_traditional,
+    title="Density (per Ha)",
+    fontsize=8,
+    title_fontsize=8
+)
+
+# Non-traditional tourist areas
+ax[1].set_box_aspect(box_aspect_ratio)
+non_traditional_area.plot(
+    column='density',
+    cmap='Blues',
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 5},
+    legend=False,
+    ax=ax[1]
+)
+ctx.add_basemap(ax[1], source=ctx.providers.Esri.WorldGrayCanvas, crs=non_traditional_area.crs, alpha=0.5)
+ax[1].set_title("Airbnb Density - Non-Traditional Tourist Area", fontsize=8)
+ax[1].axis("off")
+
+bins_non_traditional = scheme_non_traditional.bins
+labels_non_traditional = [f"{int(bins_non_traditional[i-1])} - {int(bins_non_traditional[i])}" for i in range(1, len(bins_non_traditional))]
+labels_non_traditional.insert(0, f"< {int(bins_non_traditional[0])}")
+colors_non_traditional = plt.cm.Blues(range(50, 256, 50))
+
+# label
+patches_non_traditional = [mpatches.Patch(color=colors_non_traditional[i], label=labels_non_traditional[i]) for i in range(len(labels_non_traditional))]
+# Non-traditional tourist areas legend
+ax[1].legend(
+    handles=patches_non_traditional,
+    title="Density (per Ha)",
+    fontsize=8,
+    title_fontsize=12
+)
+
+# layout
+plt.tight_layout()
+plt.show()
+```
+
+Airbnb in London shows a spatial-functional gradient: it overlaps with major attractions in traditional tourist areas but lacks hotspots in non-traditional areas, indicating untapped demand. Future growth should focus on enhancing the appeal of these areas to drive market expansion and spatial rebalancing
+
+## 对比传统旅游区与非传统旅游区中房源类型的集中度
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from shapely.geometry import Point
+from geopandas import GeoDataFrame
+from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib.patches import FancyArrowPatch
+from IPython.display import display, HTML
+
+# 柱状图改进部分
+# ================
+
+# 加载旅游区划分数据
+tourism_data = pd.read_csv("data/london_tourism_area.csv") 
+# 重命名 MSOA11CD 为 geo_code，确保可以合并
+tourism_data.rename(columns={"MSOA11CD": "geo_code"}, inplace=True)
+# 合并热点数据到 Airbnb 数据集
+airbnb_with_hotspot = airbnb_intersect.merge(tourism_data, on="geo_code", how="left")
+
+# 按热点分类和房源类型分组，统计房源数量
+room_type_stats = airbnb_with_hotspot.groupby(["hotspot_binary", "room_type"])["host_id"].count().reset_index()
+# 重命名统计列
+room_type_stats.rename(columns={"host_id": "listing_count"}, inplace=True)
+
+# 添加房东类型列
+airbnb_with_hotspot["host_type"] = airbnb_with_hotspot["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+
+# 按热点分类和房东类型分组，统计房源数量
+host_type_stats = airbnb_with_hotspot.groupby(["hotspot_binary", "host_type"])["host_id"].count().reset_index()
+# 重命名统计列
+host_type_stats.rename(columns={"host_id": "host_count"}, inplace=True)
+
+sns.set_theme(style="whitegrid", context="talk")
+plt.rcParams['axes.linewidth'] = 1.5  
+plt.rcParams['axes.edgecolor'] = 'black'
+
+# 计算各分组百分比，方便在图中标注
+room_type_totals = room_type_stats.groupby("hotspot_binary")["listing_count"].transform('sum')
+room_type_stats["percentage"] = (room_type_stats["listing_count"] / room_type_totals) * 100
+
+host_type_totals = host_type_stats.groupby("hotspot_binary")["host_count"].transform('sum')
+host_type_stats["percentage"] = (host_type_stats["host_count"] / host_type_totals) * 100
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+# 房源类型分布图
+room_palette = ["#6CBAD8", "#6FC8CA", "#DBF1FA", "#F3FBF2"]  
+sns.barplot(
+    data=room_type_stats, 
+    x="hotspot_binary", 
+    y="listing_count", 
+    hue="room_type", 
+    palette=room_palette, 
+    edgecolor='black', 
+    linewidth=1.5, 
+    ax=axes[0]
+)
+axes[0].set_title("Room Type Distribution: Traditional vs Non-Traditional Tourism Areas", fontsize=14, pad=20)
+axes[0].set_xlabel("Tourism Area Type (1=Traditional, 0=Non-Traditional)", fontsize=12)
+axes[0].set_ylabel("Number of Listings", fontsize=12)
+axes[0].legend(title="Room Type", loc="upper right")
+
+# 为每个柱添加标签（显示数量与百分比）
+for p in axes[0].patches:
+    height = p.get_height()
+    if height > 0:
+        # 根据x位置找到相应的hotspot_binary分组总数
+        hb = int(round(p.get_x()))
+        total = room_type_totals[room_type_stats['hotspot_binary'] == hb].iloc[0]
+        percent = (height / total) * 100
+        axes[0].annotate(f"{int(height)}\n({percent:.1f}%)", 
+                         xy=(p.get_x() + p.get_width()/2, height), 
+                         xytext=(0,5), textcoords="offset points", 
+                         ha='center', va='bottom', fontsize=10)
+
+# 房东类型分布图
+host_palette = ["#8BCF8B", "#C4E9CA"]                       
+sns.barplot(
+    data=host_type_stats, 
+    x="hotspot_binary", 
+    y="host_count", 
+    hue="host_type", 
+    palette=host_palette, 
+    edgecolor='black', 
+    linewidth=1.5, 
+    ax=axes[1]
+)
+axes[1].set_title("Host Concentration: Traditional vs Non-Traditional Tourism Areas", fontsize=14, pad=20)
+axes[1].set_xlabel("Tourism Area Type (1=Traditional, 0=Non-Traditional)", fontsize=12)
+axes[1].set_ylabel("Number of Hosts", fontsize=12)
+axes[1].legend(title="Host Type", loc="upper right")
+
+# 为每个柱添加标签（显示数量与百分比）
+for p in axes[1].patches:
+    height = p.get_height()
+    if height > 0:
+        hb = int(round(p.get_x()))
+        total = host_type_totals[host_type_stats['hotspot_binary'] == hb].iloc[0]
+        percent = (height / total) * 100
+        axes[1].annotate(f"{int(height)}\n({percent:.1f}%)", 
+                         xy=(p.get_x() + p.get_width()/2, height), 
+                         xytext=(0,5), textcoords="offset points", 
+                         ha='center', va='bottom', fontsize=10)
+
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+title: "Room Type Summary Report"
+format: html
+---
+
+import pandas as pd
+from tabulate import tabulate
+from IPython.display import display, Markdown
+
+# 数据清洗与计算
+listing_type_stats = airbnb_intersect["room_type"].value_counts(normalize=True)
+airbnb_intersect['estimated_rented_days'] = airbnb_intersect['minimum_nights'] * airbnb_intersect['reviews_per_month'] * 12
+airbnb_intersect['estimated_annual_income'] = airbnb_intersect['estimated_rented_days'] * airbnb_intersect['price']
+
+summary_stats = airbnb_intersect.groupby('room_type').agg(
+    average_rented_days=('estimated_rented_days', 'mean'),
+    average_annual_income=('estimated_annual_income', 'mean')
+).reset_index()
+
+# 创建总结表格
+room_summary_table = pd.DataFrame({
+    "Room Type": listing_type_stats.index,
+    "Proportion (%)": (listing_type_stats.values * 100).round(2)
+}).merge(summary_stats, left_on="Room Type", right_on="room_type").drop(columns="room_type")
+
+room_summary_table.rename(columns={
+    "average_rented_days": "Average Rented Days",
+    "average_annual_income": "Average Annual Income"
+}, inplace=True)
+
+# 转换表格为 Markdown 格式
+table_md = tabulate(room_summary_table, headers='keys', tablefmt='pipe', showindex=False)
+display(Markdown(table_md))
