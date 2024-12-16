@@ -1,0 +1,58 @@
+---
+title: "London Tourism Analysis"
+author: "Shiyu Cheng"
+date: "2024-06-16"
+format: 
+  html:
+    echo: false
+    message: false
+    warning: false
+bibliography: "xswl group.bib"
+csl: "harvard-cite-them-right.csl"
+---
+
+# Conclution: Airbnb and London’s Short-Term Lets: What could we do?
+
+## Findings
+
+**About Inside Airbnb:**
+
+Inside Airbnb provides publicly available information, offering transparency, revealing trends in the short-term rental (STL) market, and supporting spatial analysis and policy-making with flexibility and accessibility.
+
+However, as it excludes hidden or private listings and is frequently updated, the data may lack completeness and accuracy, while also raising privacy and ethical concerns regarding its use.
+
+**About STL and economy:**
+
+A small number of landlords control most short-term rentals, which far outnumber hotels. These rentals are concentrated in central London, clustering in traditional tourist areas and spreading to non-traditional zones.
+
+## How could the InsideAirbnb data set be used to inform the regulation of Short-Term Lets (STL) in London?
+
+**Revealing the overall trends in the short-term rental market**
+
+Using Inside Airbnb's geographic data, the distribution patterns of short-term rentals can be observed, helping the government identify hotspot areas for targeted planning and regulation.[@ferreriPlatformEconomiesUrban2018a]
+
+With quarterly updates, Inside Airbnb also enables the analysis of temporal changes in the market, supporting enhanced monitoring and management during peak periods.[@quattroneWhoBenefitsSharing2016]
+
+**Evaluating the Impact on the Long-Term Rental Market**
+
+Using rental price from Inside Airbnb, combined with the ratio of short-term to long-term rentals, the impact of short-term rentals on the local market can be assessed. This analysis highlights potential pressures on the long-term rental market and supports policy development to protect long-term housing.[@finckSharingCity2016]
+
+**Evaluating Social Impacts**
+
+By analyzing socio-economic data, such as tourism revenue, population density, and rental prices, the broader social impacts of the short-term rental market can be identified. This enables the development of region-specific policies tailored to local characteristics.
+
+**Monitoring and Enforcement Guidelines** 
+
+- **90-Day Rule:** Inside Airbnb data, including availability calendars and booking records, can help identify violations of the 90-day rental limit.[@@finckSharingCity2016]  
+
+- **Data Sharing and Enforcement:** The data enables targeted enforcement by local governments, focusing on high-risk listings and implementing stricter policies or taxes for multi-listing hosts.  
+
+- **Technological Applications:** Integrating Inside Airbnb data with government records (e.g., tax and property registries) can create a unified monitoring system. Machine learning models can predict high-risk violations, while automated tools (e.g., web crawlers) can continuously track new listings and host activities.[@quattroneWhoBenefitsSharing2016] 
+
+## What can we do for London’s Short-Term Lets?
+
+- **Property Registration System:** Increase transparency in the short-term rental market, providing governments with better access to data and support for enforcement.  
+
+- **Differentiated Regulation:** Alleviate housing pressure in trsditional areas while promoting economic growth in non-traditional tourist zones.  
+
+- **Operational Limits on STL:** Restrict the commercialization of short-term lets to mitigate negative impacts on the hotel and long-term housing markets.  
