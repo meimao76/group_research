@@ -1,0 +1,136 @@
+---
+title: "London Tourism Analysis"
+author: "Shiyu Cheng"
+date: "2024-06-16"
+format: 
+  html:
+    echo: false
+    message: false
+    warning: false
+bibliography: "xswl group.bib"
+csl: "harvard-cite-them-right.csl"
+---
+# 1. Airbnb in London: Challenges and Opportunities
+
+## Background: Airbnb and London’s Tourism Landscape
+
+Airbnb is a well-known shared accommodation platform that has significantly impacted the global tourism industry and short-term rental market[@chaudharyEffectsAirbnbHousing2021]. In London, **traditional tourist hotspots** such as Westminster and Camden are challenged by increasing overcrowding and housing pressures. At the same time, the rise of Airbnb has fuelled economic growth in **non-traditional tourism areas**, such as Hackney and East London, which were previously overlooked as major tourist destinations.[@airbnbNewReportTravel2023]
+
+This shift highlights a key opportunity:
+
+-   Can Airbnb's expansion into emerging areas help reduce congestion in traditional tourist hotspots while promoting economic benefits throughout the city?
+-   What are the wider implications for housing availability, economic balance and tourism policy?
+
+## Objectives: How Can Data Inform Better Tourism and Economic Policies?
+
+To address these questions and provide data-driven insights for the Mayor of London's office, we used publicly available data from Inside Airbnb. The analysis focuses on:
+
+1.  The **spatial distribution** of Airbnb listings in traditional and non-traditional tourist areas.
+2.  The **economic impact** of Airbnb on regional retail and hospitality sectors.
+
+The ultimate aim is to assess the effectiveness of the current short-term lets (STL) policy and to propose a strategy that supports **balanced tourism development** and ensures economic growth and sustainable housing supply in different parts of London.
+
+# 2. Inside Airbnb: Uncovering the Story Behind the Data
+
+The data used in this analysis is sourced from **Inside Airbnb**, covering the past twelve months of *Airbnb listings* in London.
+
+## **Q1. Who collected the InsideAirbnb data?**
+
+InsideAirbnb data was collected by Murray Cox and his collaborators. As discussed on [@2024] Inside Airbnb was founded by Murray Cox, an artist, activist and technologist who conceived the project, compiled and analysed the data and built the site.
+
+## **Q2. Why did they collect the InsideAirbnb data?**
+
+The Inside Airbnb data was collected to:
+
+-   \*\*\*\*\*\*Understand the impact of STL\*\* on local communities and housing markets.
+-   **Support policymakers and researchers** with transparent data for informed decisions.
+-   **Raise public awareness** and promote responsible short-term rental policies and practices.
+
+## **Q3. How did they collect it?**
+
+Inside Airbnb collects publicly available data from the Airbnb website, including listing details, availability calendars (365 days), and reviews. The data is then:
+
+1.  **Cleaned:** Verified, anonymised (locations within 150 meters), and corrected for accuracy.
+2.  **Aggregated:** Summarized to provide key metrics for visualisation and analysis.
+3.  **Analysed:** Occupancy models estimate rental frequency and income, with filters applied to highlight highly available and frequently booked listings.
+
+The site uses open-source tools like Python, PostgreSQL, and Mapbox to process and present the data for public research and policy discussions.
+
+## **Q4. How does the method of collection (Q3) impact the completeness and/or accuracy of the InsideAirbnb data? How well does it represent the process it seeks to study, and what wider issues does this raise?**
+
+1.  Completeness & Accuracy:
+
+-   \*Sampling Limitations: \*\* Web scraping captures only publicly available listings, excluding private, removed, or hidden rentals.
+-   \*Dynamic Data: \*\* Listings change frequently, so snapshots may not reflect real-time trends.
+-   \*Data Quality: \*\* Errors in scraping or Airbnb's platform can affect reliability.
+
+2.  Representation:
+
+The data highlights trends but misses local market dynamics and host behaviors. Regional variations limit broader applicability.
+
+3.  Wider Issues:
+
+-   \*Policy Risks: \*\*Incomplete data can lead to misguided policies.
+-   \*Privacy: \*\* Ethical concerns arise around data ownership and usage.
+-   \*Bias: \*\* Data motivations may influence analysis.
+
+## **Q5. What ethical considerations does the use of the InsideAirbnb data raise?**
+
+1.  **Privacy:** Publicly scraped data includes host details, raising concerns about consent and privacy.
+2.  **Data Misuse:** Misinterpretation can lead to flawed conclusions or biased policies.
+3.  **Community Impact:** Highlighting certain areas may stigmatise hosts or neighbourhoods, exacerbating tensions.
+4.  **Discrimination:** Regulatory scrutiny may unfairly target specific communities.
+5.  **Transparency:** Data collection methods and biases must be clear to ensure accountability.
+6.  **Long-Term Effects:** Policy decisions based on incomplete data can harm housing affordability and vulnerable populations.
+
+# Conclution: What could we do?
+
+## Findings
+
+**About Inside Airbnb:**
+
+Inside Airbnb provides publicly available information, offering transparency, revealing trends in the short-term rental (STL) market, and supporting spatial analysis and policy-making with flexibility and accessibility.
+
+However, as it excludes hidden or private listings and is frequently updated, the data may lack completeness and accuracy, while also raising privacy and ethical concerns regarding its use.
+
+**About Short Term Lets:**
+
+A small number of landlords control most short-term rentals, which far outnumber hotels. These rentals are concentrated in central London, clustering in traditional tourist areas and spreading to non-traditional zones.
+
+**About Economy:**
+
+Airbnb density acctually reduces tourism economy. When too many Airbnb listings appear in non-traditional tourist areas, they exceed what the local economy can handle. 
+
+Excessively high Airbnb density weakens the quality of local tourism services, pushes up housing prices and rents, displaces long-term residents, and increases pressure on local communities and resources.[@barronEffectHomeSharingHouse2020]
+
+## How could the InsideAirbnb data set be used to inform the regulation of Short-Term Lets (STL) in London?
+
+**Revealing the overall trends in the short-term rental market**
+
+Using Inside Airbnb's geographic data, the distribution patterns of short-term rentals can be observed, helping the government identify hotspot areas for targeted planning and regulation.[@ferreriPlatformEconomiesUrban2018a]
+
+With quarterly updates, Inside Airbnb also enables the analysis of temporal changes in the market, supporting enhanced monitoring and management during peak periods.[@quattroneWhoBenefitsSharing2016]
+
+**Evaluating the Impact on the Long-Term Rental Market**
+
+Using rental price from Inside Airbnb, combined with the ratio of short-term to long-term rentals, the impact of short-term rentals on the local market can be assessed. This analysis highlights potential pressures on the long-term rental market and supports policy development to protect long-term housing.[@finckSharingCity2016]
+
+**Evaluating Social Impacts**
+
+By analyzing socio-economic data, such as tourism revenue, population density, and rental prices, the broader social impacts of the short-term rental market can be identified. This enables the development of region-specific policies tailored to local characteristics.
+
+**Monitoring and Enforcement Guidelines** 
+
+- **90-Day Rule:** Inside Airbnb data, including availability calendars and booking records, can help identify violations of the 90-day rental limit.[@@finckSharingCity2016]  
+
+- **Data Sharing and Enforcement:** The data enables targeted enforcement by local governments, focusing on high-risk listings and implementing stricter policies or taxes for multi-listing hosts.  
+
+- **Technological Applications:** Integrating Inside Airbnb data with government records (e.g., tax and property registries) can create a unified monitoring system. Machine learning models can predict high-risk violations, while automated tools (e.g., web crawlers) can continuously track new listings and host activities.[@quattroneWhoBenefitsSharing2016] 
+
+## What can we do for London’s Short-Term Lets?
+
+- **Property Registration System:** Increase market transparency, facilitate governmental oversight, and support enforcement.
+
+- **Differentiated Regulation:** Introduce listing caps or growth limits in non-traditional tourist areas alongside infrastructure and service investments, improving local attractiveness.
+
+- **Operational Limits:** Restrict excessive short-term rental commercialization to maintain a balanced market and mitigate negative impacts on hotels and long-term housing.
