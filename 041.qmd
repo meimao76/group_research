@@ -1,0 +1,128 @@
+---
+title: "London Tourism Analysis"
+author: "Shiyu Cheng"
+date: "2024-06-16"
+format: 
+  html:
+    echo: false
+    message: false
+    warning: false
+bibliography: "xswl group.bib"
+csl: "harvard-cite-them-right.csl"
+---
+
+# Airbnb and Toursim: 
+
+## London Toursim Area Differences 
+
+Based on the TOURIST AREA CYCLE OF EVOLUTION theory and Central Place theory[@butlerConceptTouristArea1980], we divide London's tourist areas into "traditional tourist areas" and "non-traditional tourist areas". 
+
+Traditional tourist areas include those areas characterized by famous attractions, high-density hotel distribution and frequent tourist visits, such as Westminster Abbey, Tower of London, Covent Garden, etc. Non-traditional tourist areas refer to areas that do not have a concentration of well-known attractions, but have gradually attracted tourists in recent years due to cultural activities, local characteristics or emerging tourism needs, such as Greenwich.
+
+To identify these areas, we used publicly available data, including tourism POI (points of interest) distribution, hotel distribution, and relevant literature on local tourism development strategies. By combining this information with actual observations, we have clearly demarcated London's traditional and non-traditional tourist areas.
+
+- Traditional Areas: Westminster, London Bridge, the London Eye, and other central historical and cultural sites
+- Non-Trditional Areas: The majority of the outer London areas
+
+## Tourism Area Map
+
+```{python, echo=false, warning=false, message=false}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from shapely.validation import make_valid
+from shapely.ops import snap, unary_union
+from libpysal.weights import Queen
+from esda.moran import Moran, Moran_Local
+import warnings
+warnings.filterwarnings("ignore")
+```
+```{python, echo=false, warning=false, message=false}
+# Load tourism data
+londonpoi_t = gpd.read_file("london-latest.shp")
+londonpoi_t = gpd.GeoDataFrame(
+    londonpoi_t, 
+    geometry=gpd.points_from_xy(londonpoi_t['lon'], londonpoi_t['lat']), 
+    crs="EPSG:4326"
+)
+```
+```{python, echo=false, warning=false, message=false}
+# Filter for tourism category
+tourism_data = londonpoi_t[londonpoi_t['category'].str.lower() == 'tourism']
+tourism_data = tourism_data[['category', 'name', 'lon', 'lat', 'geometry']]
+```
+```{python, echo=false, warning=false, message=false}
+# Load MSOA shapefile
+london_msoa = gpd.read_file("MSOA_2004_London_High_Resolution.shp")
+london_msoa = london_msoa.to_crs("EPSG:27700")
+```
+```{python, echo=false, warning=false, message=false}
+# Align CRS
+tourism_data = tourism_data.to_crs(london_msoa.crs)
+```
+```{python, echo=false, warning=false, message=false}
+# Spatial join to assign tourism points to MSOA
+tourism_with_msoa = gpd.sjoin(tourism_data, london_msoa, how='inner', predicate='within')
+```
+```{python, echo=false, warning=false, message=false}
+# Aggregate tourism counts by MSOA
+msoa_tourism_count = tourism_with_msoa.groupby('MSOA_CODE').size().reset_index(name='tourism_count')
+london_msoa_with_counts = london_msoa.merge(msoa_tourism_count, on='MSOA_CODE', how='left')
+london_msoa_with_counts['tourism_count'] = london_msoa_with_counts['tourism_count'].fillna(0)
+```
+```{python, echo=false, warning=false, message=false}
+# Calculate area and tourism density
+london_msoa_with_counts['area_km2'] = london_msoa_with_counts.geometry.area / 1e6
+london_msoa_with_counts['tourism_density'] = london_msoa_with_counts['tourism_count'] / london_msoa_with_counts['area_km2']
+```
+```{python, echo=false, warning=false, message=false}
+# Fix geometries
+london_msoa_with_counts.geometry = london_msoa_with_counts.geometry.apply(make_valid)
+london_msoa_with_counts = london_msoa_with_counts.drop_duplicates(subset='geometry')
+london_msoa_with_counts = london_msoa_with_counts[~london_msoa_with_counts.geometry.is_empty]
+```
+```{python, echo=false, warning=false, message=false}
+# Construct Queen's adjacency matrix
+w = Queen.from_dataframe(london_msoa_with_counts)
+
+# Calculate Moran's I for global and local analysis
+moran = Moran(london_msoa_with_counts['tourism_density'], w)
+local_moran = Moran_Local(london_msoa_with_counts['tourism_density'], w)
+
+# Classify significant hotspots
+london_msoa_with_counts['local_I'] = local_moran.Is
+london_msoa_with_counts['p_value'] = local_moran.p_sim
+london_msoa_with_counts['hotspot_type'] = local_moran.q
+london_msoa_with_counts['hotspot_binary'] = london_msoa_with_counts['hotspot_type'].apply(
+    lambda x: 1 if x == 1 else 0  # 1: High-High, 0: Others
+)
+```
+```{python, echo=false, warning=false, message=false}
+# Plot binary hotspot map
+colors = ['#BAD2E1', '#5385BD']  # Non-hotspot, High-High Hotspot
+cmap = ListedColormap(colors)
+
+fig, ax = plt.subplots(1, 1, figsize=(12, 10))
+london_msoa_with_counts.plot(
+    column='hotspot_binary',
+    cmap=cmap,
+    legend=False,
+    ax=ax
+)
+
+# Add custom legend
+import matplotlib.patches as mpatches
+legend_handles = [
+    mpatches.Patch(color='#BAD2E1', label='Non-Traditional Area'),
+    mpatches.Patch(color='#5385BD', label='Traditional Area')
+]
+ax.legend(handles=legend_handles, loc='lower right', title='Hotspot Type')
+
+plt.title("London Tourism Area Map")
+plt.show()
+```
+
+
+
+# References
