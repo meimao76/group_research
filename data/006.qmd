@@ -1,0 +1,1031 @@
+---
+bibliography: https://raw.githubusercontent.com/meimao76/group_research/main/data/xswl_group.bib
+csl: harvard-cite-them-right.csl
+title: Group Name's Group Project
+execute:
+  echo: false
+  freeze: true
+format:
+  html:
+    code-copy: true
+    code-link: true
+    toc: true
+    toc-title: On this page
+    toc-depth: 2
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+  pdf:
+    include-in-header:
+      text: |
+        \addtokomafont{disposition}{\rmfamily}
+    sansfont: "Roboto Flex"
+    monofont: "Liberation Mono"
+    papersize: a4
+    geometry:
+      - top=25mm
+      - left=40mm
+      - right=30mm
+      - bottom=25mm
+      - heightrounded
+    toc: false
+    number-sections: false
+    colorlinks: true
+    highlight-style: github
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.15.2
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+## Declaration of Authorship {.unnumbered .unlisted}
+
+We, \[XSWL Group\], pledge our honour that the work presented in this assessment is our own. Where information has been derived from other sources, we confirm that this has been indicated in the work. Where a Large Language Model such as ChatGPT has been used we confirm that we have made its contribution to the final submission clear.
+
+Date:16/12/2024
+
+Student Numbers:
+
+## Brief Group Reflection
+
++---------------------------------------------------------+--------------------------------------------------------+
+| What Went Well                                          | What Was Challenging                                   |
++=========================================================+========================================================+
+| Literature Review and Theoretical Foundations           | Test QMD Code Execution Construct Economic Indicators, |
++---------------------------------------------------------+--------------------------------------------------------+
+| Selection and Execution of the Analytical Model Report  | Considering Endogeneity，Interpret Analysis Results    |
++---------------------------------------------------------+--------------------------------------------------------+
+| Outline and Logical Structure                           | Clean Economic Data                                    |
++---------------------------------------------------------+--------------------------------------------------------+
+
+
+
+## Response to Questions
+
+We have combined the seven questions that need to be answered with our report:
+
+For **Questions 1-5**: please see **2**.
+
+For **Questions 6**: please see **3**
+
+For **Questions 7**: please see **6**
+
+# 1. Airbnb in London: Challenges and Opportunities
+
+## Airbnb and London’s Tourism Landscape
+
+Airbnb is a well-known shared accommodation platform that has significantly impacted the global tourism industry and short-term rental market[@chaudharyEffectsAirbnbHousing2021]. In London, **traditional tourist hotspots** such as Westminster and Camden are challenged by increasing overcrowding and housing pressures. At the same time, the rise of Airbnb has fuelled economic growth in **non-traditional tourism areas**, such as Hackney and East London, which were previously overlooked as major tourist destinations.[@airbnbNewReportTravel2023]
+
+This shift highlights a key opportunity:
+
+-   Can Airbnb's expansion into emerging areas help reduce congestion in traditional tourist hotspots while promoting economic benefits throughout the city?
+-   What are the wider implications for housing availability, economic balance and tourism policy?
+
+## How Can Data Inform Better Tourism and Economic Policies?
+
+To address these questions and provide data-driven insights for the Mayor of London's office, we used publicly available data from Inside Airbnb. The analysis focuses on:
+
+1.  The **spatial distribution** of Airbnb listings in traditional and non-traditional tourist areas.
+2.  The **economic impact** of Airbnb on regional retail and hospitality sectors.
+
+The ultimate aim is to assess the effectiveness of the current short-term lets (STL) policy and to propose a strategy that supports **balanced tourism development** and ensures economic growth and sustainable housing supply in different parts of London.
+
+# 2. Uncovering the Story Behind Airbnb
+
+The data used in this analysis is sourced from **Inside Airbnb**, covering the past twelve months of *Airbnb listings* in London.
+
+## **Q1. Who collected the InsideAirbnb data?**
+
+InsideAirbnb data was collected by Murray Cox and his collaborators. As discussed on [@2024] Inside Airbnb was founded by Murray Cox, an artist, activist and technologist who conceived the project, compiled and analysed the data and built the site.
+
+## **Q2. Why did they collect the InsideAirbnb data?**
+
+The Inside Airbnb data was collected to:
+
+-   **Understand the impact of STL** on local communities and housing markets.
+-   **Support policymakers and researchers** with transparent data for informed decisions.
+-   **Raise public awareness** and promote responsible short-term rental policies and practices.
+
+## **Q3. How did they collect it?**
+
+Inside Airbnb collects publicly available data from the Airbnb website, including listing details, availability calendars (365 days), and reviews. The data is then:
+
+1.  **Cleaned:** Verified, anonymised (locations within 150 meters), and corrected for accuracy.
+2.  **Aggregated:** Summarized to provide key metrics for visualisation and analysis.
+3.  **Analysed:** Occupancy models estimate rental frequency and income, with filters applied to highlight highly available and frequently booked listings.
+
+The site uses open-source tools like Python, PostgreSQL, and Mapbox to process and present the data for public research and policy discussions.
+
+## **Q4. How does the method of collection (Q3) impact the completeness and/or accuracy of the InsideAirbnb data? How well does it represent the process it seeks to study, and what wider issues does this raise?**
+
+1.  Completeness & Accuracy:
+
+-   **Sampling Limitations: ** Web scraping captures only publicly available listings, excluding private, removed, or hidden rentals.
+-   **Dynamic Data: ** Listings change frequently, so snapshots may not reflect real-time trends.
+-   **Data Quality: ** Errors in scraping or Airbnb's platform can affect reliability.
+
+2.  Representation:
+
+The data highlights trends but misses local market dynamics and host behaviors. Regional variations limit broader applicability.
+
+3.  Wider Issues:
+
+-   **Policy Risks: **Incomplete data can lead to misguided policies.
+-   **Privacy: ** Ethical concerns arise around data ownership and usage.
+-   **Bias: ** Data motivations may influence analysis.
+
+## **Q5. What ethical considerations does the use of the InsideAirbnb data raise?**
+
+1.  **Privacy:** Publicly scraped data includes host details, raising concerns about consent and privacy.
+2.  **Data Misuse:** Misinterpretation can lead to flawed conclusions or biased policies.
+3.  **Community Impact:** Highlighting certain areas may stigmatise hosts or neighbourhoods, exacerbating tensions.
+4.  **Discrimination:** Regulatory scrutiny may unfairly target specific communities.
+5.  **Transparency:** Data collection methods and biases must be clear to ensure accountability.
+6.  **Long-Term Effects:** Policy decisions based on incomplete data can harm housing affordability and vulnerable populations.
+
+# 3. An Overview of Airbnb Distribution in London
+
+## **Q6.With reference to the InsideAirbnb data (i.e. using numbers, figures, maps, and descriptive statistics), what does an analysis of Hosts and the types of properties that they list suggest about the nature of Airbnb lettings in London?**
+
+### Single Host vs Multi Host
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import scipy as sp
+from shapely.geometry import Point
+from geopandas import GeoDataFrame
+import matplotlib.pyplot as plt
+import seaborn as sns
+from IPython.display import display, Markdown
+from tabulate import tabulate
+from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib.patches import FancyArrowPatch
+from IPython.display import display, HTML
+```
+
+```{python}
+raw_airbnb=pd.read_csv("https://github.com/meimao76/group_research/raw/refs/heads/main/data/listings.csv")
+msoa_raw_boundary=gpd.read_file("https://github.com/meimao76/group_research/raw/refs/heads/main/data/greater_london.gpkg")
+
+geometry = [Point(xy) for xy in zip(raw_airbnb['longitude'], raw_airbnb['latitude'])]
+geo_airbnb = gpd.GeoDataFrame(raw_airbnb, geometry=geometry, crs="EPSG:4326")
+# Import Audemars Piguet CSV, convert to GeoDataFrame
+geo_airbnb=geo_airbnb.to_crs("EPSG:27700")
+geo_airbnb = GeoDataFrame(geo_airbnb, geometry=geo_airbnb['geometry'])
+# Unified Coordinate System (UCS) for reprojection
+
+# Sift out unneeded columns
+geo_airbnb=geo_airbnb.drop(columns=['id', 'name', 'neighbourhood_group','availability_365'])
+airbnb_intersect = gpd.sjoin(geo_airbnb, msoa_raw_boundary, how="inner", predicate="intersects")
+# Cleaning data: removing spaces, processing missing values
+airbnb_intersect['room_type'] = airbnb_intersect['room_type'].str.strip().fillna('Unknown')
+# Intersecting Airbnb Data and Space
+
+# De-duplicate hosts and keep their listings_count (de-duplication is based on host_name)
+unique_hosts = airbnb_intersect[['host_name', 'calculated_host_listings_count']].drop_duplicates()
+
+# Add a new column host_type（Single Host + Multi Host）
+unique_hosts["host_type"] = unique_hosts["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+airbnb_intersect["host_type"] = airbnb_intersect["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+# Filter the number of single hosts (calculated_host_listings_count == 1)
+# Filter for multiple hosts (calculated_host_listings_count > 1)
+single_host_count = (unique_hosts['calculated_host_listings_count'] == 1).sum()
+multi_host_count = (unique_hosts['calculated_host_listings_count'] > 1).sum()
+
+# Counting the number of listings controlled by multiple hosts
+multi_host_listings = unique_hosts.loc[unique_hosts['calculated_host_listings_count'] > 1, 'calculated_host_listings_count'].sum()
+
+# Calculate the total number of listings and the ratio of multiple hosts
+total_listings = len(airbnb_intersect)
+multi_host_listings_ratio = multi_host_listings / total_listings * 100
+
+# Creating Forms
+host_summary = pd.DataFrame({
+    "Category": ["Single Host Count", "Multi Host Count", "Multi Host Listings Ratio (%)"],
+    "Value": [single_host_count, multi_host_count, f"{multi_host_listings_ratio:.2f}"]
+})
+
+from IPython.display import display
+
+# Organize data into a Series for plotting
+data = unique_hosts['host_type'].value_counts()
+```
+
+```{python}
+# Number and percentage of properties by type of listing
+listing_type_stats = airbnb_intersect["room_type"].value_counts(normalize=True)
+
+# Estimated total rental days and annual revenue
+airbnb_intersect['estimated_rented_days'] = airbnb_intersect['minimum_nights'] * airbnb_intersect['reviews_per_month'] * 12
+airbnb_intersect['estimated_annual_income'] = airbnb_intersect['estimated_rented_days'] * airbnb_intersect['price']
+
+# Calculate average rental days and annual revenue by subgroup
+summary_stats = airbnb_intersect.groupby('room_type').agg(
+    average_rented_days=('estimated_rented_days', 'mean'),
+    average_annual_income=('estimated_annual_income', 'mean')
+).reset_index()
+
+# Organized in a tabular form
+room_summary_table = pd.DataFrame({
+    "Room Type": listing_type_stats.index,
+    "Proportion (%)": (listing_type_stats.values * 100).round(2) 
+}).merge(summary_stats, left_on="Room Type", right_on="room_type").drop(columns="room_type")
+
+# Renaming columns
+room_summary_table.rename(columns={
+    "average_rented_days": "Average Rented Days",
+    "average_annual_income": "Average Annual Income"
+}, inplace=True)
+
+# output table
+styled_table = room_summary_table.style\
+    .highlight_max(subset=["Proportion (%)", "Average Annual Income"], color="lightgreen")\
+    .highlight_min(subset=["Average Rented Days"], color="lightcoral")\
+    .format({
+        "Proportion (%)": "{:.2f}%",
+        "Average Rented Days": "{:.1f} days",
+        "Average Annual Income": "${:,.2f}"
+    })\
+    .set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#4CAF50'), ('color', 'white'), ('font-weight', 'bold')]},
+        {'selector': 'tbody td', 'props': [('text-align', 'center')]},
+        {'selector': 'tbody tr:hover', 'props': [('background-color', '#f4f4f4')]}
+    ])
+
+from IPython.display import HTML, display
+
+host_summary = host_summary.reset_index(drop=True)
+
+host_styled = host_summary.style\
+    .set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#4CAF50'), ('color', 'white'), ('font-weight', 'bold'), ('text-align','center')]},
+        {'selector': 'tbody td', 'props': [('text-align', 'center')]},
+        {'selector': 'tbody tr:hover', 'props': [('background-color', '#f4f4f4')]}
+    ])\
+    .set_caption("Host Summary")\
+    .format({"Value": str})
+
+
+
+# Converting two tables into HTML code and controlling the appearance and layout via CSS
+host_html = host_styled.set_table_attributes("style='display:inline-block; margin-right:50px; border:1px solid #ccc; vertical-align:top;'")._repr_html_()
+room_html = styled_table.set_table_attributes("style='display:inline-block; border:1px solid #ccc; vertical-align:top;'")._repr_html_()
+
+# Display two side-by-side tables
+display(HTML(host_html + room_html))
+```
+
+Table 1：The number of multi-homeowners is less than half the number of single-homeowners, but the percentage of listings under their name does account for almost 50% of the total listings on airbnb.
+
+Table 2：Entire home/apt rentals make up the vast majority of properties, the income is also significantly higher than other types of properties, reflecting the higher demand in this market.
+
+## Airbnb Room Type Spatial Distribution Map
+
+```{python}
+# Rename index_right column in airbnb_intersect
+if "index_right" in airbnb_intersect.columns:
+    airbnb_intersect = airbnb_intersect.rename(columns={"index_right": "index_right_old"})
+
+# Rename the index_right column in msoa_raw_boundary
+if "index_right" in msoa_raw_boundary.columns:
+    msoa_raw_boundary = msoa_raw_boundary.rename(columns={"index_right": "index_right_old"})
+
+# Performs spatial connectivity
+airbnb_intersect_merged_gdf = gpd.sjoin(
+    airbnb_intersect, msoa_raw_boundary, how="inner", predicate="within"
+)
+
+# Updated data
+airbnb_gdf = airbnb_intersect_merged_gdf
+boundary_gdf = msoa_raw_boundary
+
+# Define a dictionary of listing types and color correspondences
+color_map = {
+    "Entire home/apt": "#04579B",
+    "Private room": "#DBF1FA",
+    "Shared room": "#519D78",
+    "Hotel room": "#6FC8CA"
+}
+
+# Setting the chart size and style
+fig, ax = plt.subplots(figsize=(12, 12))
+plt.style.use("seaborn-v0_8-muted")
+
+# Drawing of area boundaries
+boundary_gdf.plot(ax=ax, color='whitesmoke', edgecolor='grey', linewidth=0.7, alpha=0.7)
+
+# Plot points by category, using custom colors
+for room_type, color in color_map.items():
+    subset = airbnb_gdf[airbnb_gdf['room_type'] == room_type]
+    subset.plot(
+        ax=ax,
+        color=color,
+        markersize=5,
+        alpha=0.4,
+        label=room_type
+    )
+
+# Setup Legend
+ax.legend(title="Room Type", loc="upper left")
+
+# Setting the map title and axes
+plt.title("Airbnb Room Type Spatial Distribution", fontsize=15)
+plt.axis("off")  # Remove axes frame lines
+plt.tight_layout()
+plt.show()
+```
+
+Use the map to visualise the distribution of specific airbnb listings in the London area.
+
+## Comparing the density of airbnb listings to traditional hotels within London 
+
+```{python}
+# loading cleaning csv
+# loading cleaning csv
+df = pd.read_csv("https://raw.githubusercontent.com/TARTAR4600/group_research_data_cleaning/refs/heads/main/data/listings.csv")
+
+# create GeoDataFrame the geographic coordinate reference system is WGS84 (EPSG:4326)
+geometry = [Point(xy) for xy in zip(df['longitude'], df['latitude'])]
+geo_df = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+# save as a Parquet file
+geo_df.to_parquet("airbnb_listings_wgs84.parquet", index=False)
+
+shp_path = "https://raw.githubusercontent.com/meimao76/group_research/main/data/LONDONPOIS.gpkg"
+gdf = gpd.read_file(shp_path)
+if gdf.crs is None:
+    gdf = gdf.set_crs("EPSG:4326")
+else:
+    gdf = gdf.to_crs("EPSG:4326")
+
+londonacc_t_gdf = gdf[gdf['category'] == 'ACCOMMODATION']
+london_hotel_gdf = londonacc_t_gdf[londonacc_t_gdf['subcategor'] == 'HOTEL']
+output_path = "hotel_point.parquet"
+london_hotel_gdf.to_parquet(output_path, index=False)
+london_hotel_gdf = gpd.read_parquet(output_path)
+print(f"file is: {output_path}")
+```
+```{python}
+
+# loading GPKG
+msoa_boundaries = gpd.read_file('https://github.com/meimao76/group_research/raw/refs/heads/main/data/greater_london.gpkg')
+
+hotel_gdf = gpd.read_parquet("hotel_point.parquet")
+airbnb_gdf = gpd.read_parquet("airbnb_listings_wgs84.parquet")
+
+#Change the point to a projected coordinate system
+airbnb_gdf = airbnb_gdf.to_crs('epsg:27700') # There is no 'in_place=True' option here.
+hotel_gdf = hotel_gdf.to_crs('epsg:27700') # There is no 'in_place=True' option here.
+
+#join the data  
+# using spatial join to link Airbnb points to MSOA regions
+airbnb_with_msoa = gpd.sjoin(airbnb_gdf, msoa_boundaries, how="inner", predicate='within')
+
+# Counting the number of Airbnb points in each MSOA area
+airbnb_count = airbnb_with_msoa.groupby('geo_code').size().reset_index(name='airbnb_count')
+
+msoa_boundaries['area_m2'] = msoa_boundaries.geometry.area
+msoa_boundaries['area_h'] = msoa_boundaries.geometry.area / 10000
+# merge data
+msoa_with_airbnb = msoa_boundaries.merge(airbnb_count, on='geo_code', how='left')
+
+#nan=0
+msoa_with_airbnb['airbnb_count'] = msoa_with_airbnb['airbnb_count'].fillna(0)
+
+msoa_with_airbnb['density'] = msoa_with_airbnb['airbnb_count'] / msoa_with_airbnb['area_h']
+
+# Standardised formula：Min-Max Scaling
+def min_max_scaling(column):
+    return (column - column.min()) / (column.max() - column.min())
+
+
+msoa_with_airbnb['nairbnb_count'] = min_max_scaling(msoa_with_airbnb['airbnb_count'])
+msoa_with_airbnb['n_density'] = min_max_scaling(msoa_with_airbnb['density'])
+
+#Join hotel data
+hotels_with_msoa = gpd.sjoin(hotel_gdf, msoa_with_airbnb, how="inner", predicate="within")
+hotel_count = hotels_with_msoa.groupby('geo_code').size().reset_index(name='hotel_count')
+msoa_with_airbnb_hotels = msoa_with_airbnb.merge(hotel_count, on='geo_code', how='left')
+msoa_with_airbnb_hotels['hotel_count'] = msoa_with_airbnb_hotels['hotel_count'].fillna(0)
+msoa_with_airbnb_hotels['hotel_density'] = msoa_with_airbnb_hotels['hotel_count'] / msoa_with_airbnb_hotels['area_h']
+
+# Standardised formula：Min-Max Scaling
+def min_max_scaling(column):
+    return (column - column.min()) / (column.max() - column.min())
+
+
+msoa_with_airbnb_hotels['nhotel_count'] = min_max_scaling(msoa_with_airbnb_hotels['hotel_count'])
+msoa_with_airbnb_hotels['nhotel_density'] = min_max_scaling(msoa_with_airbnb_hotels['hotel_density'])
+
+import matplotlib.pyplot as plt
+import mapclassify as mc
+import geopandas as gpd
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.patches as mpatches
+
+fig, axes = plt.subplots(1, 2, figsize=(20, 7))
+
+blues_custom = LinearSegmentedColormap.from_list("custom_blues", ['#E6F2FF', '#6BAED6', '#2171B5'], N=256)
+greens_custom = LinearSegmentedColormap.from_list("custom_greens", ['#E5F5E0', '#74C476', '#238B45'], N=256)
+
+
+def custom_legend(scheme, cmap, title):
+    bins = scheme.bins
+    labels = [f"{format(bins[i-1], '.2g')} - {format(bins[i], '.2g')}" for i in range(1, len(bins))]
+    labels.insert(0, f"< {format(bins[0], '.2g')}")
+    colors = [cmap(i / len(labels)) for i in range(len(labels))]
+    patches = [mpatches.Patch(color=colors[i], label=labels[i]) for i in range(len(labels))]
+    return patches
+
+# Airbnb density (Natural Breaks)
+scheme_density = mc.NaturalBreaks(msoa_with_airbnb_hotels['density'], k=8)
+msoa_with_airbnb_hotels.plot(
+    column='density',
+    cmap=blues_custom,
+    legend=False,
+    linewidth=0.5,
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 8},
+    ax=axes[0]
+)
+axes[0].set_title("Airbnb Density (Natural Breaks)")
+axes[0].set_axis_off()
+
+airbnb_legend = custom_legend(scheme_density, blues_custom, "Airbnb Density (per hectare)")
+axes[0].legend(
+    handles=airbnb_legend, 
+    title="Airbnb Density (per hectare)", 
+    loc="upper left",
+    fontsize=8,        
+    title_fontsize=10,  
+    labelspacing=0.5,  
+    handlelength=1,    
+    frameon=True       
+)
+
+# Hotel density (Natural Breaks)
+scheme_hotel_density = mc.NaturalBreaks(msoa_with_airbnb_hotels['hotel_density'], k=8)
+msoa_with_airbnb_hotels.plot(
+    column='hotel_density',
+    cmap=greens_custom,
+    legend=False,
+    linewidth=0.5,
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 8},
+    ax=axes[1]
+)
+axes[1].set_title("Hotel Density (Natural Breaks)")
+axes[1].set_axis_off()
+
+
+# Hotel density 
+hotel_legend = custom_legend(scheme_hotel_density, greens_custom, "Hotel Density (per hectare)")
+axes[1].legend(
+    handles=hotel_legend, 
+    title="Hotel Density (per hectare)", 
+    loc="upper left",
+    fontsize=8,        
+    title_fontsize=10,  
+    labelspacing=0.5,  
+    handlelength=1,     
+    frameon=True     
+)
+
+# layout
+plt.tight_layout()
+plt.show()
+```
+
+A comparison of density plots shows that Airbnb has a wider distribution, with high-density areas concentrated in Central London’s tourist hotspots and spreading into outer residential areas like Islington and Hackney, demonstrating strong market penetration and flexibility. 
+
+In contrast, hotels are heavily concentrated in central commercial and tourist hubs, such as City of London, with minimal presence in outlying areas, highlighting their market limitations and Airbnb’s potential to fill this gap.
+
+# 4.Airbnb Prosperity in Tourism Areas
+
+## London Toursim Area Differences
+
+Based on the TOURIST AREA CYCLE OF EVOLUTION theory and Central Place theory[@butlerConceptTouristArea1980], we divide London's tourist areas into "traditional tourist areas" and "non-traditional tourist areas".
+
+Traditional tourist areas feature famous attractions, dense hotel clusters, and frequent visits. Non-traditional tourist areas lack iconic sights but have recently drawn tourists due to cultural events, unique local features, or emerging travel interests.
+
+We identified these areas using publicly available data. By integrating these sources with on-the-ground observations, we clearly delineated tourist zones into two types.
+
+-   Traditional Areas: Westminster, London Bridge, the London Eye, and other central historical and cultural sites.
+-   Non-Trditional Areas: The majority of the outer London areas.
+
+```{python message=FALSE, warning=FALSE, include=FALSE}
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from shapely.validation import make_valid
+from shapely.ops import snap, unary_union
+from libpysal.weights import Queen
+from esda.moran import Moran, Moran_Local
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+```{python, echo=false, warning=false, message=false}
+# Load tourism data
+londonpoi_t = gpd.read_file('https://github.com/meimao76/group_research/raw/refs/heads/main/data/LONDONPOIS.gpkg')
+londonpoi_t = gpd.GeoDataFrame(
+    londonpoi_t, 
+    geometry=gpd.points_from_xy(londonpoi_t['lon'], londonpoi_t['lat']), 
+    crs="EPSG:4326"
+)
+```
+
+```{python, echo=false, warning=false, message=false}
+# Filter for tourism category
+tourism_data = londonpoi_t[londonpoi_t['category'].str.lower() == 'tourism']
+tourism_data = tourism_data[['category', 'name', 'lon', 'lat', 'geometry']]
+```
+
+```{python, echo=false, warning=false, message=false}
+# Load MSOA shapefile
+london_msoa = gpd.read_file("https://github.com/meimao76/group_research/raw/refs/heads/wqc/data/greater_london.gpkg")
+london_msoa = london_msoa.to_crs("EPSG:27700")
+```
+
+```{python echo=false, message=FALSE, warning=FALSE}
+# Align CRS
+tourism_data = tourism_data.to_crs(london_msoa.crs)
+```
+
+```{python, echo=false, warning=false, message=false}
+# Spatial join to assign tourism points to MSOA
+tourism_with_msoa = gpd.sjoin(tourism_data, london_msoa, how='inner', predicate='within')
+```
+
+```{python, echo=false, warning=false, message=false}
+# Aggregate tourism counts by MSOA
+msoa_tourism_count = tourism_with_msoa.groupby('geo_code').size().reset_index(name='tourism_count')
+london_msoa_with_counts = london_msoa.merge(msoa_tourism_count, on='geo_code', how='left')
+london_msoa_with_counts['tourism_count'] = london_msoa_with_counts['tourism_count'].fillna(0)
+```
+
+```{python, echo=false, warning=false, message=false}
+# Calculate area and tourism density
+london_msoa_with_counts['area_km2'] = london_msoa_with_counts.geometry.area / 1e6
+london_msoa_with_counts['tourism_density'] = london_msoa_with_counts['tourism_count'] / london_msoa_with_counts['area_km2']
+```
+
+```{python, echo=false, warning=false, message=false}
+# Fix geometries
+london_msoa_with_counts.geometry = london_msoa_with_counts.geometry.apply(make_valid)
+london_msoa_with_counts = london_msoa_with_counts.drop_duplicates(subset='geometry')
+london_msoa_with_counts = london_msoa_with_counts[~london_msoa_with_counts.geometry.is_empty]
+```
+
+```{python, echo=false, warning=false, message=false}
+# Construct Queen's adjacency matrix
+w = Queen.from_dataframe(london_msoa_with_counts)
+
+# Calculate Moran's I for global and local analysis
+moran = Moran(london_msoa_with_counts['tourism_density'], w)
+local_moran = Moran_Local(london_msoa_with_counts['tourism_density'], w)
+
+# Classify significant hotspots
+london_msoa_with_counts['local_I'] = local_moran.Is
+london_msoa_with_counts['p_value'] = local_moran.p_sim
+london_msoa_with_counts['hotspot_type'] = local_moran.q
+london_msoa_with_counts['hotspot_binary'] = london_msoa_with_counts['hotspot_type'].apply(
+    lambda x: 1 if x == 1 else 0  # 1: High-High, 0: Others
+)
+```
+
+```{python, echo=false, warning=false, message=false}
+# Plot binary hotspot map
+colors = ['#BAD2E1', '#5385BD']  # Non-hotspot, High-High Hotspot
+cmap = ListedColormap(colors)
+
+fig, ax = plt.subplots(1, 1, figsize=(12, 10))
+london_msoa_with_counts.plot(
+    column='hotspot_binary',
+    cmap=cmap,
+    legend=False,
+    ax=ax
+)
+
+# Add custom legend
+import matplotlib.patches as mpatches
+legend_handles = [
+    mpatches.Patch(color='#BAD2E1', label='Non-Traditional Area'),
+    mpatches.Patch(color='#5385BD', label='Traditional Area')
+]
+ax.legend(handles=legend_handles, loc='lower right', title='Hotspot Type')
+
+plt.title("London Tourism Area Map")
+plt.show()
+```
+
+```{python}
+london_msoa_with_counts['MSOA_CODE']=london_msoa_with_counts['geo_code']
+london_msoa_with_counts[['MSOA_CODE','hotspot_binary']].to_csv("londonT&NTlist.csv")
+```
+
+## Unlocking Airbnb’s Potential Beyond Tourist Hubs
+
+```{python}
+import matplotlib.pyplot as plt
+import contextily as ctx
+import mapclassify as mc
+import matplotlib.patches as mpatches
+
+tdf = pd.read_csv("https://raw.githubusercontent.com/meimao76/group_research/refs/heads/main/data/londonT%26NTlist.csv")
+tdf['MSOA_CODE'] = tdf['MSOA_CODE'].astype(str)  #turn both type to str
+msoa_with_airbnb_hotels['geo_code'] = msoa_with_airbnb_hotels['geo_code'].astype(str)
+
+# join the data together
+msoa_with_airbnb_hotels = msoa_with_airbnb_hotels.merge(
+    tdf,
+    left_on='geo_code',        # msoa_with_airbnb_hotels 中的列
+    right_on='MSOA_CODE',     # tdfcolumnc
+    how='left'               # left join
+)
+
+
+msoa_with_airbnb_hotels = msoa_with_airbnb_hotels.drop(columns=['MSOA_CODE'])
+
+#tradtional area and non_traditional_area
+traditional_area = msoa_with_airbnb_hotels[msoa_with_airbnb_hotels['hotspot_binary'] == 1]
+non_traditional_area = msoa_with_airbnb_hotels[msoa_with_airbnb_hotels['hotspot_binary'] == 0]
+```
+
+```{python}
+scheme_traditional = mc.NaturalBreaks(traditional_area['density'], k=5) 
+scheme_non_traditional = mc.NaturalBreaks(non_traditional_area['density'], k=5)
+
+fig, ax = plt.subplots(1, 2, figsize=(20, 7))
+
+
+box_aspect_ratio = 1
+
+# Traditional tourist areas
+ax[0].set_box_aspect(box_aspect_ratio)
+traditional_area.plot(
+    column='density',
+    cmap='Reds',
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 5},
+    legend=False,
+    ax=ax[0]
+)
+ctx.add_basemap(ax[0], source=ctx.providers.Esri.WorldGrayCanvas, crs=traditional_area.crs, alpha=0.5)
+ax[0].set_title("Airbnb Density - Traditional Tourist Area",fontsize=8)
+ax[0].axis("off")
+
+bins_traditional = scheme_traditional.bins
+labels_traditional = [f"{int(bins_traditional[i-1])} - {int(bins_traditional[i])}" for i in range(1, len(bins_traditional))]
+labels_traditional.insert(0, f"< {int(bins_traditional[0])}")
+colors_traditional = plt.cm.Reds(range(50, 256, 50))
+
+
+patches_traditional = [mpatches.Patch(color=colors_traditional[i], label=labels_traditional[i]) for i in range(len(labels_traditional))]
+ax[0].legend(
+    handles=patches_traditional,
+    title="Density (per Ha)",
+    fontsize=8,
+    title_fontsize=8
+)
+
+# Non-traditional tourist areas
+ax[1].set_box_aspect(box_aspect_ratio)
+non_traditional_area.plot(
+    column='density',
+    cmap='Blues',
+    edgecolor='white',
+    scheme='natural_breaks',
+    classification_kwds={'k': 5},
+    legend=False,
+    ax=ax[1]
+)
+ctx.add_basemap(ax[1], source=ctx.providers.Esri.WorldGrayCanvas, crs=non_traditional_area.crs, alpha=0.5)
+ax[1].set_title("Airbnb Density - Non-Traditional Tourist Area", fontsize=8)
+ax[1].axis("off")
+
+bins_non_traditional = scheme_non_traditional.bins
+labels_non_traditional = [f"{int(bins_non_traditional[i-1])} - {int(bins_non_traditional[i])}" for i in range(1, len(bins_non_traditional))]
+labels_non_traditional.insert(0, f"< {int(bins_non_traditional[0])}")
+colors_non_traditional = plt.cm.Blues(range(50, 256, 50))
+
+# label
+patches_non_traditional = [mpatches.Patch(color=colors_non_traditional[i], label=labels_non_traditional[i]) for i in range(len(labels_non_traditional))]
+# Non-traditional tourist areas legend
+ax[1].legend(
+    handles=patches_non_traditional,
+    title="Density (per Ha)",
+    fontsize=8,
+    title_fontsize=12
+)
+
+# layout
+plt.tight_layout()
+plt.show()
+```
+
+Airbnb in London shows a spatial-functional gradient: it overlaps with major attractions in traditional tourist areas but lacks hotspots in non-traditional areas, indicating untapped demand. 
+
+## Homes Over Hotels: Airbnb’s New Face in London
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from shapely.geometry import Point
+from geopandas import GeoDataFrame
+from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib.patches import FancyArrowPatch
+from IPython.display import display, HTML
+```
+
+```{python}
+# Improved Bar Chart Section
+# ================
+
+# Load tourism area classification data
+tourism_data = pd.read_csv("https://raw.githubusercontent.com/meimao76/group_research/refs/heads/main/data/londonT%26NTlist.csv") 
+# rename MSOA_CODE as geo_code，make sure their can be merged
+tourism_data.rename(columns={"MSOA_CODE": "geo_code"}, inplace=True)
+# merge the hotspot data to Airbnb dataset
+airbnb_with_hotspot = airbnb_intersect.merge(tourism_data, on="geo_code", how="left")
+
+# Group by hotspot classification and property type, then count the number of listings
+room_type_stats = airbnb_with_hotspot.groupby(["hotspot_binary", "room_type"])["host_id"].count().reset_index()
+# rename the summarise columns
+room_type_stats.rename(columns={"host_id": "listing_count"}, inplace=True)
+
+# Add a host type column
+airbnb_with_hotspot["host_type"] = airbnb_with_hotspot["calculated_host_listings_count"].apply(
+    lambda x: "Single Host" if x == 1 else "Multi Host"
+)
+
+
+# Group by hotspot classification and property type, then count the number of listings
+host_type_stats = airbnb_with_hotspot.groupby(["hotspot_binary", "host_type"])["host_id"].count().reset_index()
+# rename the summarise columns
+host_type_stats.rename(columns={"host_id": "host_count"}, inplace=True)
+
+sns.set_theme(style="whitegrid", context="talk")
+plt.rcParams['axes.linewidth'] = 1.5  
+plt.rcParams['axes.edgecolor'] = 'black'
+
+# caculate the percentage for each group to annotate in the plot
+room_type_totals = room_type_stats.groupby("hotspot_binary")["listing_count"].transform('sum')
+room_type_stats["percentage"] = (room_type_stats["listing_count"] / room_type_totals) * 100
+
+host_type_totals = host_type_stats.groupby("hotspot_binary")["host_count"].transform('sum')
+host_type_stats["percentage"] = (host_type_stats["host_count"] / host_type_totals) * 100
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+# Plot the distribution of property types
+room_palette = ["#6CBAD8", "#6FC8CA", "#DBF1FA", "#F3FBF2"]  
+sns.barplot(
+    data=room_type_stats, 
+    x="hotspot_binary", 
+    y="listing_count", 
+    hue="room_type", 
+    palette=room_palette, 
+    edgecolor='black', 
+    linewidth=1.5, 
+    ax=axes[0]
+)
+axes[0].set_title("Room Type Distribution: Traditional vs Non-Traditional Tourism Areas", fontsize=14, pad=20)
+axes[0].set_xlabel("Tourism Area Type (1=Traditional, 0=Non-Traditional)", fontsize=12)
+axes[0].set_ylabel("Number of Listings", fontsize=12)
+axes[0].legend(title="Room Type", loc="upper right")
+
+# Add labels to each bar (showing count and percentage)
+for p in axes[0].patches:
+    height = p.get_height()
+    if height > 0:
+        # Find the total count for each corresponding hotspot_binary group based on the x position
+        hb = int(round(p.get_x()))
+        total = room_type_totals[room_type_stats['hotspot_binary'] == hb].iloc[0]
+        percent = (height / total) * 100
+        axes[0].annotate(f"{int(height)}\n({percent:.1f}%)", 
+                         xy=(p.get_x() + p.get_width()/2, height), 
+                         xytext=(0,5), textcoords="offset points", 
+                         ha='center', va='bottom', fontsize=10)
+
+# Plot the distribution of host types
+host_palette = ["#8BCF8B", "#C4E9CA"]                       
+sns.barplot(
+    data=host_type_stats, 
+    x="hotspot_binary", 
+    y="host_count", 
+    hue="host_type", 
+    palette=host_palette, 
+    edgecolor='black', 
+    linewidth=1.5, 
+    ax=axes[1]
+)
+axes[1].set_title("Host Concentration: Traditional vs Non-Traditional Tourism Areas", fontsize=14, pad=20)
+axes[1].set_xlabel("Tourism Area Type (1=Traditional, 0=Non-Traditional)", fontsize=12)
+axes[1].set_ylabel("Number of Hosts", fontsize=12)
+axes[1].legend(title="Host Type", loc="upper right")
+
+# Add labels to each bar (showing count and percentage)
+for p in axes[1].patches:
+    height = p.get_height()
+    if height > 0:
+        hb = int(round(p.get_x()))
+        total = host_type_totals[host_type_stats['hotspot_binary'] == hb].iloc[0]
+        percent = (height / total) * 100
+        axes[1].annotate(f"{int(height)}\n({percent:.1f}%)", 
+                         xy=(p.get_x() + p.get_width()/2, height), 
+                         xytext=(0,5), textcoords="offset points", 
+                         ha='center', va='bottom', fontsize=10)
+
+
+plt.tight_layout()
+plt.show()
+```
+
+Airbnb's London market is dominated by entire homes and multi-hosts, reflecting high commercialisation. Traditional tourist areas have more private rooms and fewer hotel rooms, while non-traditional areas see Airbnb expanding into residential neighborhoods, filling gaps left by hotels.
+
+# 5.The Impact of Airbnb on the Tourism Economy
+
+## Airbnb in Traditional vs. Non-Traditional Areas
+This analysis examines how Airbnb supply influences the tourism economy in traditional and non-traditional areas.
+
+## Tourism Economic Indicators
+We developed a tourism economic indicator to measure the effects of Airbnb density, considering both local and neighbouring impacts.
+
+
+```{python}
+#| echo: false
+#| warning: false
+#| message: false
+#| results: 'hide'
+
+import geopandas as gpd
+import pandas as pd
+import numpy as np
+from libpysal import weights
+from esda import Moran
+from spreg import ML_Lag
+from mapclassify import NaturalBreaks
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+
+# Load spatial data
+gdf = gpd.read_file("https://github.com/meimao76/group_research/raw/refs/heads/main/data/greater_london.gpkg")
+
+# Load CSV data
+tourism_df = pd.read_csv("https://raw.githubusercontent.com/meimao76/group_research/refs/heads/main/data/londonT%26NTlist.csv")
+turnover_df = pd.read_csv("https://raw.githubusercontent.com/meimao76/group_research/refs/heads/main/data/turnover_final_merge.csv")
+listings_df = pd.read_csv("https://raw.githubusercontent.com/meimao76/group_research/refs/heads/main/data/listings.csv")
+
+# Rename columns for merging
+gdf = gdf.rename(columns={'geo_code': 'MSOA_CODE'})
+turnover_df = turnover_df.rename(columns={'geo_code':'MSOA_CODE'})
+
+# Define tourism-related categories
+tourism_categories = ['_retail', '_f&b', '_travel', '_art&ent', '_sp_recrea', '_gambling']
+tourism_cols = [col for col in turnover_df.columns if any(cat in col for cat in tourism_categories)]
+tourism_cols_numeric = [col for col in tourism_cols if np.issubdtype(turnover_df[col].dtype, np.number)]
+
+# Compute a tourism economic indicator
+turnover_df['tourism_economic_indicator'] = turnover_df[tourism_cols_numeric].sum(axis=1)
+
+# Convert listings to a GeoDataFrame and reproject
+listings_gdf = gpd.GeoDataFrame(
+    listings_df,
+    geometry=gpd.points_from_xy(listings_df['longitude'], listings_df['latitude']),
+    crs="EPSG:4326"
+)
+listings_gdf = listings_gdf.to_crs(epsg=27700)
+gdf = gdf.to_crs(epsg=27700)
+
+# Spatial join to assign Airbnb listings to MSOA
+listings_with_area = gpd.sjoin(listings_gdf, gdf, how="left", predicate="within")
+
+# Aggregate Airbnb supply by MSOA_CODE
+airbnb_supply = listings_with_area.groupby('MSOA_CODE').size().reset_index(name='airbnb_supply')
+
+# Merge data
+tourism_df_selected = turnover_df[['MSOA_CODE', 'tourism_economic_indicator']]
+merged_df = tourism_df_selected.copy()
+merged_df = pd.merge(merged_df, airbnb_supply, on='MSOA_CODE', how='left')
+merged_df['airbnb_supply'] = merged_df['airbnb_supply'].fillna(0)
+merged_df = pd.merge(merged_df, tourism_df, on='MSOA_CODE', how='left')
+
+SARdata = gdf.merge(merged_df, on='MSOA_CODE', how='inner')
+
+# Create interaction term
+SARdata['airbnb_interact'] = SARdata['airbnb_supply'] * SARdata['hotspot_binary']
+
+# Calculate area in hectares
+SARdata['area_m2'] = SARdata.geometry.area
+SARdata['area_ha'] = SARdata['area_m2'] / 10000.0
+SARdata['airbnb_density_per_ha'] = SARdata['airbnb_supply'] / SARdata['area_ha']
+
+# Prepare variables for the model
+X_vars = ['airbnb_density_per_ha', 'airbnb_interact']
+X = SARdata[X_vars].values
+y = SARdata['tourism_economic_indicator'].values.reshape(-1,1)
+
+# Create spatial weights
+W = weights.contiguity.Queen.from_dataframe(SARdata, use_index=True)
+W.transform = 'r'
+
+# Compute Moran's I (hidden results)
+mi = Moran(y.flatten(), W)
+
+# Run SAR model (hidden results)
+sar_model = ML_Lag(y, X, w=W, name_y='tourism_economic_indicator',
+                   name_x=X_vars, name_w='W', method='full')
+```
+
+## Key Findings: Airbnb Density and Tourism Economy
+Airbnb density significantly reduces tourism economic performance (-26.87), especially in non-traditional areas. In traditional areas, stronger infrastructure mitigates this effect (+0.72). Positive spillover effects (0.63) highlight regional interconnections, emphasising the need for region-specific policies and spatial planning to balance Airbnb growth and economic goals.
+
+# Conclusion: What could we do?
+
+## Findings
+
+**Inside Airbnb:**
+
+Inside Airbnb offers transparent, flexible, and accessible data for analyzing the short-term rental (STR) market and supporting policy-making. However, it excludes private listings, may lack accuracy, and raises privacy and ethical concerns.
+
+**Short Term Lets:**
+A few landlords dominate most STRs, which outnumber hotels and are concentrated in central London, clustering in traditional tourist areas while expanding into non-traditional zones.
+
+**Economy:**
+
+High Airbnb density reduces tourism economy. In non-traditional areas, oversupply strains local resources, raises housing costs, displaces residents, and weakens tourism services, harming the local economy.[@barronEffectHomeSharingHouse2020]
+
+## **Q7.How could the InsideAirbnb data set be used to inform the regulation of Short-Term Lets (STL) in London?**
+
+**Revealing Market Trends**
+
+Inside Airbnb’s geographic data reveals the distribution of short-term rentals, helping identify hotspots for targeted regulation. Quarterly updates enable tracking temporal market changes, aiding peak-period management.[@ferreriPlatformEconomiesUrban2018a, @quattroneWhoBenefitsSharing2016]
+
+**Accessing Long-Term Rental**
+
+Rental price data and the ratio of short-term to long-term rentals help evaluate STL’s pressure on housing markets, guiding policies to protect long-term rentals.[@finckSharingCity2016]
+
+**Evaluating Social Impacts**
+
+Analysing socio-economic data (e.g., tourism revenue, population density, rental prices) identifies STL’s broader social impacts, supporting region-specific policies.
+
+**Monitoring and Enforcement**
+
+-   **90-Day Rule:** Availability calendars and booking records help detect violations.[@ @finckSharingCity2016]
+
+-   **Data Sharing and Enforcement:** Data highlights high-risk listings for stricter policies or taxes on multi-listing hosts.
+
+-   **Technological Applications:** Combining Inside Airbnb with government records enables unified monitoring. Machine learning and automated tools improve violation detection and listing tracking. [@quattroneWhoBenefitsSharing2016]
+
+## What can we do for London’s Short-Term Lets?
+
+-   **Property Registration System:** Increase market transparency, facilitate governmental oversight, and support enforcement.
+
+-   **Differentiated Regulation:** Introduce listing caps or growth limits in non-traditional tourist areas alongside infrastructure and service investments, improving local attractiveness.
+
+-   **Operational Limits:** Restrict excessive short-term rental commercialisation to maintain a balanced market and mitigate negative impacts on hotels and long-term housing.
+
+# References
+
+# Appendix
+
+## Data Source
+
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| Data Source      | **Column Name**                      | Year                        | **Level** | URL                                                                                                                       |
++==================+======================================+=============================+===========+===========================================================================================================================+
+| Airbnb Data      | lon, lat , room_type, reviews... ... | 2023-2024(recent 12 months) | point     | <https://data.insideairbnb.com/united-kingdom/england/london/2024-09-06/data/listings.csv.gz>                             |
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| London Boundary  | MSOA code                            | 2011.12                     | MSOA      | <https://data.london.gov.uk/download/2011-boundary-files/9e1dd6bc-4a41-45a6-8b8a-015cc8dd25a8/2011_london_boundaries.zip> |
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| Economic Impacts | turnover,\                           | 2023 annual                 | MSOA      | <https://www.nomisweb.co.uk/query/select/getdatasetbytheme.asp?opt=3&theme=&subgrp=>                                      |
+|                  | industry                             |                             |           |                                                                                                                           |
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| Hotel Points     | fclass='Hotel'                       | 2024                        | point     | <http://download.slipo.eu/results/osm-to-csv/>                                                                            |
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| Tourism Point    | fclass='Tourism'                     | 2024                        | point     | <http://download.slipo.eu/results/osm-to-csv/>                                                                            |
++------------------+--------------------------------------+-----------------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
